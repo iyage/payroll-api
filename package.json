@@ -1,0 +1,25 @@
+{
+  "name": "payroll-management",
+  "version": "1.0.0",
+  "description": "payroll management app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon"
+  },
+  "author": "Iyaghe",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "dependencies": {
+    "bcrypt": "*",
+    "body-parser": "^1.20.2",
+    "date-fns": "^2.30.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "jwt-decode": "^2.2.0",
+    "mongoose": "^7.4.5"
+  }
+}
