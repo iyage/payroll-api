@@ -1,6 +1,6 @@
 const { Schema, default: mongoose } = require("mongoose");
 const User = require("../model/User");
-const paySlip = require("../model/paySlip");
+const Payslip = require("../model/payslip");
 
 const generatePaySlip = async (req, res) => {
   const reqBody = req.body;
@@ -86,7 +86,7 @@ const generatePaySlip = async (req, res) => {
     deductions.forEach((deduction) => {
       net -= deduction.value;
     });
-    const payslip = await paySlip.create({
+    const payslip = await Payslip.create({
       gross: salary,
       employee: reqBody.employeeId,
       deductions: deductions,
