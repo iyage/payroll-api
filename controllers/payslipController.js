@@ -1,7 +1,6 @@
 const { Schema, default: mongoose } = require("mongoose");
 const User = require("../model/User");
-const Payslip = require("../model/payslip");
-
+const Payslip = require("../model/Payslip");
 const generatePaySlip = async (req, res) => {
   const reqBody = req.body;
   if (!reqBody) {
@@ -62,7 +61,6 @@ const generatePaySlip = async (req, res) => {
         data: null,
       });
     }
-    console.log(employee);
     if (!employee.deductions) {
       return res.status(400).send({
         message: `Please set employee deductions`,
@@ -75,9 +73,8 @@ const generatePaySlip = async (req, res) => {
         data: null,
       });
     }
-    const salary = employee.salaries[0].salary;
 
-    console.log(salary);
+    const salary = employee.salaries[0].salary;
     const deductions = employee.deductions.map((deduction) => {
       deduction.value = salary * (deduction.percentage / 100);
       return deduction;
@@ -86,6 +83,7 @@ const generatePaySlip = async (req, res) => {
     deductions.forEach((deduction) => {
       net -= deduction.value;
     });
+
     const payslip = await Payslip.create({
       gross: salary,
       employee: reqBody.employeeId,
