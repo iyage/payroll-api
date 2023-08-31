@@ -4,6 +4,7 @@ const {
   userLogin,
   getAllUsers,
   addSalary,
+  getUserById,
 } = require("../controllers/userController");
 const router = express.Router();
 const bodyParser = require("body-parser");
@@ -40,5 +41,13 @@ router.post(
   verifyUserRole(roles.adminRole),
 
   addSalary
+);
+
+router.post(
+  "/fetchUserById",
+  jsonParser,
+  verifyJwt,
+  verifyUserRole(roles.user),
+  getUserById
 );
 module.exports = router;

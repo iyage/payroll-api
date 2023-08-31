@@ -2,8 +2,10 @@ const User = require("../model/User");
 const bcrypt = require("bcrypt");
 const jwtToken = require("jsonwebtoken");
 const Salary = require("../model/Salary");
+const { default: mongoose } = require("mongoose");
 const addNewUser = async (req, res) => {
   const reqBody = req.body;
+  console.log(reqBody);
   if (!reqBody) {
     return res.status(400).send("Valid payload is required");
   }
@@ -85,16 +87,13 @@ const userLogin = async (req, res) => {
         userInfo: {
           firstName: user.firstName,
           lastName: user.lastName,
-          email: user.email,
-          payslips: user.payslips,
-          bonuses: user.bonuses,
-          reportTo: user.reportTo,
           roles: user.roles,
+          id: user._id,
         },
       },
       "12345juklinhj3460lkyinbgfrte",
       {
-        expiresIn: "10m",
+        expiresIn: "1d",
       }
     );
 
@@ -180,4 +179,54 @@ const addSalary = async (req, res) => {
   }
 };
 
-module.exports = { addNewUser, userLogin, getAllUsers, addSalary };
+const getUserById = async (req, res) => {
+  const reqBody = req.body;
+  if (!reqBody) {
+    return res.status(400).send("Valid payload is required");
+  }
+
+  if (!reqBody.employeeId) {
+    return res.status(400).send("Valid password  is required");
+  }
+  try {
+    const employee = await User.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(reqBody.employeeId),
+        },
+      },
+      {
+        $lookup: {
+          from: "payslips",
+          localField: "_id",
+          foreignField: "employee",
+          as: "payslips",
+        },
+      },
+      {
+        $project: {
+          password: 0,
+        },
+      },
+    ]);
+    if (!employee) {
+      return res.status(400).send({
+        message: `Employee with  employeeId ${reqBody?.employeeId} does not exist`,
+        data: null,
+      });
+    }
+
+    return res.status(200).send({
+      message: "User Successfully fetched",
+      data: employee[0],
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
+module.exports = { addNewUser, userLogin, getAllUsers, addSalary, getUserById };
